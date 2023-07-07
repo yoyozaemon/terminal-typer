@@ -1,0 +1,71 @@
+#[derive(Clone, Debug)]
+
+pub struct Line{
+    line_no: usize,
+    head_space: Option<String>,
+    entered: Option<String>,
+    current: Option<char>,
+    rest: Option<String>,
+}
+
+impl Line{
+    fn start_index(line: &str) -> usize{
+        line.len() - line.trim_start().len()
+    }
+
+    pub fn new(line_no: usize, line: &str) -> Self{
+        let text = &line[Line::start_index(line)..];
+        let head_space = if head_space.is_empty(){
+            None
+        } else {
+            Some(head_space.to_string())
+        };
+        match text.chars().collect::<Vec<char>>().as_slice(){
+            [h] => Line{
+                line_no: line_no,
+                head_space: head_space,
+                entered: None,
+                current: Some(h.clone()),
+                rest: None,
+            },
+            [h, rest @ ..] => Line{
+                line_no: line_no,
+                head_space: head_space,
+                entered: None,
+                current: Some(h.clone()),
+                rest: Some(String::from_iter(rest)),
+            },
+            _ => Line{
+                line_no: line_no,
+                head_space: None,
+                entered: None,
+                current: None,
+                rest: None,
+            },
+        }
+    }
+
+    pub fn current_text(&self) -> Option<char>{
+        self.current
+    }
+    
+    pub fn entered_text(&self) -> Option<String>{
+        match (self.head_space.clone(),self.entered.clone()) {
+            (Some(h),Some(entered)) => Some(h + &entered),
+            (Some(h),None) => Some(h),
+            (None, Some(entered)) => Some(entered),
+            _ => None,
+        }
+    }
+    
+    pub fn rest_text(&self) -> Option<String>{
+        self.rest.clone()
+    }
+
+    pub fn input(&self, c: char) ->bool {
+        match self.current{
+            Some(i) => i == c,
+            None => true,
+        }
+    }
+}
