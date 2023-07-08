@@ -62,10 +62,47 @@ impl Line{
         self.rest.clone()
     }
 
-    pub fn input(&self, c: char) ->bool {
+    pub fn input(&self, c: char) -> bool {
         match self.current{
             Some(i) => i == c,
             None => true,
+        }
+    }
+
+    pub fn line_no(&self) -> usize{
+        self.line_no
+    }
+
+    pub fn is_entered(&self) -> bool{   
+        self.rest.is_none()
+    }
+
+    pub fn next(&self) -> Self{
+        if let Some(rest) = self.rest.clone(){
+            match rest.chars().collect::<Vec<char>>().as_slice(){
+                [h, rest @ ..] => Line{
+                    line_no: self.line_no,
+                    head_space: self.head_space.clone(),
+                    entered: match self.entered.clone(){
+                        Some(e) => self.current.map(|c| e + String::from(c).as_str()),
+                        None => self.current.map(String::from),
+                    },
+                    current: Some(h.clone()),
+                    rest: Some(String::from_iter(rest)),
+                },
+                _ => Line{
+                    line_no: self.line_no,
+                    head_space: self.head_space.clone(),
+                    entered: match self.entered.clone(){
+                        Some(e) => self.current.map(|c| e + String::from(c).as_str()),
+                        None => self.current.map(String::from),
+                    },
+                    current: None,
+                    rest: None,
+                }
+            }
+        } else {
+            self.clone()
         }
     }
 }
