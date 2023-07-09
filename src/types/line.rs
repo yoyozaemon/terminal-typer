@@ -106,3 +106,35 @@ impl Line{
         }
     }
 }
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    
+    #[test]
+    fn new(){
+        let line = Line::new(1,"  {");
+        assert_eq!(
+            input .clone()
+                  .current_text()
+                .map(String::from)
+                .unwrap_or("".to_owned()),
+            "i"
+        );
+
+        let next_input = input.next();
+        assert_eq!(
+            &next_input.head_space.clone().unwrap(),
+            &"      ".to_string()
+        );
+        assert_eq!(
+            &next_input
+                    .current_text()
+                    .map(String::from)
+                    .unwrap_or("".to_owned()),
+            &"n"
+        );
+        assert_eq!(&next_input.entered_text().unwrap(),&"     i".to_string());
+        assert_eq!(&next_input.rest_text().unwrap(),&"put test".to_string());
+    }
+}
