@@ -137,4 +137,32 @@ mod tests{
         assert_eq!(&next_input.entered_text().unwrap(),&"     i".to_string());
         assert_eq!(&next_input.rest_text().unwrap(),&"put test".to_string());
     }
+
+    #[test]
+    fn no_next(){
+        let input = Line::new(0,"i");
+        assert_eq!(input
+                     .clone()
+                     .current_text()
+                     .map(String::from)
+                     .unwrap_or("".to_owned()),
+                   "i"
+        );
+        let next_input = input.next();
+        assert!(next_input.is_entered());
+    }
+
+    #[test]
+    fn new_line_only(){
+        let input = Line::new(0,"\n");
+        assert_eq!(input 
+                     .clone()
+                     .current_text()
+                     .map(String::from)
+                     .unwrap_or("".to_owned()),
+                   ""
+        );
+        let next_input = input.next();
+        assert!(next_input.is_entered());
+    }
 }
