@@ -23,4 +23,55 @@ pub struct State{
     typo: usize,
 }
 
-impl Typing{}
+impl Typing{
+    pub fn new(text: &str, remaining_time: Duration, display_lines: usize) -> Result<Self>{
+        if text.is_empty(){
+            Err(anyhow!("text is empty"))
+        } else{
+            let lines: Vec<Line> = text
+                    .split("\n")
+                    .enumerate()
+                    .map(|(i, v)| Line::new(i + 1, &v.to_string()))
+                    .collect();
+            Ok(Typing::BeforeStart(State{
+                    current_index: 0,
+                    lines: lines.clone(),
+                    start_time: None,
+                    end_time: None,
+                    remaining_time: remaining_time,
+                    typed: 0,
+                    typo: 0,
+                    is_error: false,
+                    display_lines: display_lines,
+            })) 
+        }
+    }
+
+    pub fn restart(&self, text: &str, remaining_time: Duration) -> Self{
+        match self{
+            Typing::Finish(s) => Typing::BeforeStart(State{
+                    current_index: 0,
+                    lines: Typing::to_lines(text),
+                    start_time: None,
+                    end_time: None,
+                    remaining_time: remaining_time,
+                    typed: 0,
+                    typo: 0,
+                    ..s.clone()
+            }),
+            Typing::Running(s) => Typing::Running(s.clone()),
+            Typing::BeforeStart(s) => Typing::BeforeStart(s.clone()),
+        }
+    }
+
+    pub fn start(&self) -> Self{
+        match self{
+            Typing::BeforeStart(s) => Typing::Running(State{
+                    start_time: Some(Instant::now()),
+                    ..s.clone()
+            }),
+            Typing::Running(t) => Typing::Running(t.clone()),
+            Typing::Finish(t) => Typing::Finish(t.clone(),)
+        }
+    }
+}
