@@ -150,4 +150,17 @@ impl App{
         self.time = time;
         self
     }
+
+    pub fn elapsed_time(&self) -> Duration{
+        self.time - Duration::from_secs(self.typing.get_remaining_time() as u64)
+    }
+    
+    pub fn filter_text(text: &str) -> String {
+        let text = ISO_8859_1.encode(text, EncoderTrap::Ignore).unwrap();
+        ISO_8859_1
+                 .decode(&text,DecoderTrap::Strict)
+                 .unwrap()
+                 .replace("\t", "  ")
+                 .to_owned()
+    } 
 }
