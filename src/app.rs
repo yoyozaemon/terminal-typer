@@ -164,3 +164,78 @@ impl App{
                  .to_owned()
     } 
 }
+
+#[derive(Clone, Debug)]
+struct TypingProgress{
+    wpm: Vec<usize>,
+    acc: Vec<usize>,
+}
+
+impl TypingProgress{
+    pub fn new() -> Self{
+        TypingProgress{
+            wpm: Vec::new(),
+            acc: Vec::new(),
+        }
+    }
+
+    pub fn add(mut self, typing: Typing) -> Self{
+        self.wpm.push(typing.wpm());
+        self.acc.push(typing.acc());
+        self
+    }
+
+    pub fn wpm_max(&self) -> f64{
+        self.wpm.iter().fold(usize::MIN, |a, b| a.max(*b)) as f64
+    }
+
+    pub fn wpm_plot(&self) -> Vec<(f64, f64)>{
+        let mut wpm: Vec<(f64, f64)> = self
+                .wpm
+                .iter()
+                .enumerate()
+                .map(|(i, wpm)| (i as f64, *wpm as f64))
+                .collect();
+
+        wpm.insert(0, (0.0, 0.0));
+        wpm
+    }
+
+    pub fn acc_plot(&self) -> Vec<(f64, f64)>{
+        let mut acc: Vec<(f64,f64)> = self
+                .acc
+                .iter()
+                .enumerate()
+                .map(|(i, acc)| (i as f64, *acc as f64))
+                .collect();
+
+        acc.insert(0, (0.0, 100.0));
+        acc
+    }
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn start(){
+        let app = App::new("test", Duration::from_secs(10), 10).unwrap();
+        assert_eq!(app.clone().start().typing.is_before_start(), false);
+        assert_eq!(app.clone().start().typing.is_finish(), false );
+    }
+    
+    #[test]
+    fn restart(){
+        let app = App::new("test", Duration::from_secs(10), 10).unwrap();
+		assert_eq!(
+			app.clone()
+				.start()
+				.finish()
+				.restart("vv")
+				.typing
+				.is_before_start(),
+			true
+		);
+    }
+}
