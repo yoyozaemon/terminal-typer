@@ -238,4 +238,25 @@ mod tests{
 			true
 		);
     }
+
+    #[test]
+    fn selectable_time(){
+        let app = App::new("test",Duration::from_secs(10), 10).unwrap();
+        assert_eq!(app.clone().selectable_time().len(), 5);
+
+        let app = App::new("test",Duration::from_secs(30), 10).unwrap();
+        assert_eq!(app.clone().selectable_time().len(), 4);
+    }
+
+    #[test]
+    fn tick(){
+        let app = App::new("test",Duration::from_secs(10), 10).unwrap();
+        assert_eq!(app.start().tick().typing.get_remaining_time(), 9);
+    }
+
+    #[test]
+    fn elapsed_time(){
+        let app = App::new("test",Duration::from_secs(10), 10).unwrap();
+        assert_eq!(app.start().tick().elapsed_time(), Duration::from_secs(1));
+    }
 }
