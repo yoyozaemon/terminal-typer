@@ -259,4 +259,26 @@ mod tests{
         let app = App::new("test",Duration::from_secs(10), 10).unwrap();
         assert_eq!(app.start().tick().elapsed_time(), Duration::from_secs(1));
     }
+
+    #[test]
+    fn next_time_less_then_15(){
+        let app = App::new("test",Duration::from_secs(10), 10).unwrap();
+        let app = app.next_time();
+        assert_eq!(app.time, Duration::from_secs(15));
+
+        let app = app.next_time();
+        assert_eq!(app.time, Duration::from_secs(30));
+
+        let app = app.next_time();
+        assert_eq!(app.time, Duration::from_secs(60));
+
+        let app = app.next_time();
+        assert_eq!(app.time, Duration::from_secs(120));
+
+        let app = app.next_time();
+        assert_eq!(app.time, Duration::from_secs(10));
+    }
+
+    #[test]
+    fn next_time_greater_than_120(){}
 }
