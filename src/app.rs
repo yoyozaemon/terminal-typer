@@ -299,5 +299,40 @@ mod tests{
     }
 
     #[test]
-    fn prev_time_less_then_15(){}
+    fn prev_time_less_then_15(){
+        let app = App::new("test",Duration::from_secs(10),10).unwrap();
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(120));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(60));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(30));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(15));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(10));
+    }
+
+    #[test]
+    fn prev_time_greater_than_120(){
+        let app = App::new("test",Duration::from_secs(240),10).unwrap();
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(120));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(60));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(30));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(15));
+
+        let app = app.prev_time();
+        assert_eq!(app.time, Duration::from_secs(240));
+    }
 }
