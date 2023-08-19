@@ -13,13 +13,13 @@ use crate::app::App;
 use crate::types::line::Line;
 use crate::types::typing::Typing;
 
-pub enum Theme{
-    Dark, 
+pub enum Theme {
+    Dark,
     Light,
 }
 
-impl Theme{
-    pub fn new(theme: &str) -> Self{
+impl Theme {
+    pub fn new(theme: &str) -> Self {
         match theme {
             "dark" => Theme::Dark,
             "light" => Theme::Light,
@@ -27,32 +27,32 @@ impl Theme{
         }
     }
 
-    pub fn fg(&self) -> Color{
-        match self{
+    pub fn fg(&self) -> Color {
+        match self {
             Theme::Dark => Color::White,
             Theme::Light => Color::Black,
         }
     }
-    
-    pub fn bg(&self) -> Color{
-        match self{
+
+    pub fn bg(&self) -> Color {
+        match self {
             Theme::Dark => Color::Reset,
             Theme::Light => Color::Reset,
         }
     }
 }
 
-pub fn view<B: Backend>(f: &mut Frame<B>, app: &App, theme: &Theme, file: PathBuf){
-    if app.typing.is_finish(){
+pub fn view<B: Backend>(f: &mut Frame<B>, app: &App, theme: &Theme, file: PathBuf) {
+    if app.typing.is_finish() {
         let result = app.result();
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints(
-                  [
+                [
                     Constraint::Percentage(10),
                     Constraint::Percentage(70),
                     Constraint::Percentage(20),
-                  ]
+                ]
                 .as_ref(),
             )
             .split(f.size());
@@ -62,18 +62,18 @@ pub fn view<B: Backend>(f: &mut Frame<B>, app: &App, theme: &Theme, file: PathBu
             chunks[1],
         );
         f.render_widget(help_view(&theme, file), chunks[2]);
-    } else if app.typing.is_before_start(){
-            let chunks = Layout::default()
-                     .direction(Direction::Vertical)
-                     .constraints(
-                        [
-                            Constraint::Percentage(5),
-                            Constraint::Percentage(85),
-                            Constraint::Percentage(10),
-                        ]
-                    .as_ref(),
-                )
-                .split(f.size());
+    } else if app.typing.is_before_start() {
+        let chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(
+                [
+                    Constraint::Percentage(5),
+                    Constraint::Percentage(85),
+                    Constraint::Percentage(10),
+                ]
+                .as_ref(),
+            )
+            .split(f.size());
         f.render_widget(time_view(app, theme), chunks[0]);
         f.render_widget(
             lines(
@@ -89,7 +89,7 @@ pub fn view<B: Backend>(f: &mut Frame<B>, app: &App, theme: &Theme, file: PathBu
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints(
-                    [
+                [
                     Constraint::Percentage(5),
                     Constraint::Percentage(85),
                     Constraint::Percentage(10),
@@ -98,5 +98,13 @@ pub fn view<B: Backend>(f: &mut Frame<B>, app: &App, theme: &Theme, file: PathBu
             )
             .split(f.size());
         f.render_widget(remaining_time_view(&app.typing, theme), chunks[0]);
+        f.render_widget(
+            lines(
+                app.typing.display_lines(),
+                app.typing.current_line_index(),
+                app.typing.is_error(),
+            ),
+            chunks[1],
+        );
     }
 }
