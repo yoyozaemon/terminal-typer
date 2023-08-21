@@ -106,5 +106,25 @@ pub fn view<B: Backend>(f: &mut Frame<B>, app: &App, theme: &Theme, file: PathBu
             ),
             chunks[1],
         );
+        f.render_widget(result_view(&app.typing, Borders::TOP, theme),chunks[2]);
     }
+}
+
+pub fn chart_view<'a>(
+    app: &App,
+    wpm_dataset: &'a Vec<(f64, f64)>,
+    acc_dataset: &'a Vec<(f64, f64)>,
+    theme: &Theme,
+) -> Chart<'a>{
+    let elapsed_time = app.elapsed_time();
+    let result = app.result();
+
+    Chart::new(vec![
+        Dataset::default
+                .name("wpm")
+                .marker(symbols::Marker::Dot)
+                .graph_type(GraphType::Line)
+                .style(Style::default().bg(theme.bg()).fg(Color::Yellow))
+                .data(&wpm_dataset),
+    ])
 }
