@@ -127,4 +127,23 @@ pub fn chart_view<'a>(
                 .style(Style::default().bg(theme.bg()).fg(Color::Yellow))
                 .data(&wpm_dataset),
     ])
+    .style(Style::default().bg(theme.bg()).fg(theme.fg()))
+    .block(Block::default().style(Style::default().bg(theme.bg()).fg(theme.fg())))
+    .x_axis(
+            Axis::default()
+                .style(Style::default().bg(theme.bg()).fg(Color::DarkGray))
+                .labels(vec![
+                        Span::styled("0",Style::default().fg(Color::DarkGray)),
+                        Span::styled(
+                                    (elapsed_time.as_secs() / 2).to_string(),
+                                    Style::default().fg(Color::DarkGray),
+                    ),
+                        Span::styled(
+                                    elapsed_time.as_secs().to_string(),
+                                    Style::default().bg(theme.bg()).fg(theme.fg()),
+                    ),
+                ])
+                .bounds([0.0, elapsed_time.as_secs_f64()]),
+        )
+    .y_axis()
 }
