@@ -106,7 +106,7 @@ pub fn view<B: Backend>(f: &mut Frame<B>, app: &App, theme: &Theme, file: PathBu
             ),
             chunks[1],
         );
-        f.render_widget(result_view(&app.typing, Borders::TOP, theme),chunks[2]);
+        f.render_widget(result_view(&app.typing, Borders::TOP, theme), chunks[2]);
     }
 }
 
@@ -115,35 +115,48 @@ pub fn chart_view<'a>(
     wpm_dataset: &'a Vec<(f64, f64)>,
     acc_dataset: &'a Vec<(f64, f64)>,
     theme: &Theme,
-) -> Chart<'a>{
+) -> Chart<'a> {
     let elapsed_time = app.elapsed_time();
     let result = app.result();
 
-    Chart::new(vec![
-        Dataset::default
-                .name("wpm")
-                .marker(symbols::Marker::Dot)
-                .graph_type(GraphType::Line)
-                .style(Style::default().bg(theme.bg()).fg(Color::Yellow))
-                .data(&wpm_dataset),
-    ])
+    Chart::new(vec![Dataset::default
+        .name("wpm")
+        .marker(symbols::Marker::Dot)
+        .graph_type(GraphType::Line)
+        .style(Style::default().bg(theme.bg()).fg(Color::Yellow))
+        .data(&wpm_dataset)])
     .style(Style::default().bg(theme.bg()).fg(theme.fg()))
     .block(Block::default().style(Style::default().bg(theme.bg()).fg(theme.fg())))
     .x_axis(
-            Axis::default()
-                .style(Style::default().bg(theme.bg()).fg(Color::DarkGray))
-                .labels(vec![
-                        Span::styled("0",Style::default().fg(Color::DarkGray)),
-                        Span::styled(
-                                    (elapsed_time.as_secs() / 2).to_string(),
-                                    Style::default().fg(Color::DarkGray),
-                    ),
-                        Span::styled(
-                                    elapsed_time.as_secs().to_string(),
-                                    Style::default().bg(theme.bg()).fg(theme.fg()),
-                    ),
-                ])
-                .bounds([0.0, elapsed_time.as_secs_f64()]),
-        )
-    .y_axis()
+        Axis::default()
+            .style(Style::default().bg(theme.bg()).fg(Color::DarkGray))
+            .labels(vec![
+                Span::styled("0", Style::default().fg(Color::DarkGray)),
+                Span::styled(
+                    (elapsed_time.as_secs() / 2).to_string(),
+                    Style::default().fg(Color::DarkGray),
+                ),
+                Span::styled(
+                    elapsed_time.as_secs().to_string(),
+                    Style::default().bg(theme.bg()).fg(theme.fg()),
+                ),
+            ])
+            .bounds([0.0, elapsed_time.as_secs_f64()]),
+    )
+    .y_axis(
+        Axis::default()
+            .style(Style::default().bg(theme.bg()).fg(theme.fg()))
+            .labels(vec![
+                Span::styled("0", Style::default().fg(Color::DarkGray)),
+                Span::styled(
+                    (result.wpm_max / 2.0).floor().to_string(),
+                    Style::default().bg(theme.bg()).fg(Color::DarkGray),
+                ),
+                Span::styled(
+                    result.wpm_max.to_string(),
+                    Style::default().bg(theme.bg()).fg(Color::DarkGray),
+                ),
+            ])
+            .bounds([0.0, result.wpm_max]),
+    )
 }
