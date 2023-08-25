@@ -160,3 +160,24 @@ pub fn chart_view<'a>(
             .bounds([0.0, result.wpm_max]),
     )
 }
+
+fn help_view<'a>(theme: &Theme, path: PathBuf) -> Paragraph<'a>{
+    let file_path = Spans::from(Span::styled(
+        path.into_os_string().into_string().unwrap(),
+        Style::default().bg(theme.bg().fg(Color::DarkGray)),
+    ));
+    let help = Spans::from(vec![
+        Span::styled(
+                "r",
+                Style::default()
+                       .bg(theme.bg())
+                       .fg(Color::Yellow)
+                       .add_modifier(Modifier::BOLD),
+    ),
+        Span::styled(
+                "to restart",
+                Style::default().bg(theme.bg()).fg(Color::DarkGray),
+        ),
+        Span::styled(", ", Style::default().bg(theme.bg()).fg(Color::DarkGray)),
+    ])
+}
