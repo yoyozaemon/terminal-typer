@@ -179,5 +179,11 @@ fn help_view<'a>(theme: &Theme, path: PathBuf) -> Paragraph<'a>{
                 Style::default().bg(theme.bg()).fg(Color::DarkGray),
         ),
         Span::styled(", ", Style::default().bg(theme.bg()).fg(Color::DarkGray)),
+        Span::styled(
+                 "q",
+                Style::default()
+                       .bg(theme.bg())
+                       .fg(Color::Yellow)
+        )
     ])
 }
