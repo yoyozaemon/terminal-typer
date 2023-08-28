@@ -183,7 +183,20 @@ fn help_view<'a>(theme: &Theme, path: PathBuf) -> Paragraph<'a>{
                  "q",
                 Style::default()
                        .bg(theme.bg())
-                       .fg(Color::Yellow)
-        )
+                       .fg(Color::Red)
+                       .add_modifier(Modifier::BOLD),
+        ),
+        Span::styled(
+                "to quit",
+                Style::default().bg(theme.bg()).fg(Color::DarkGray),
+        ),
+        Span::styled(", ", Style::default().bg(theme.bg()).fg(Color::DarkGray)),
+        Span::styled(
+                 "left, right",
+                 Style::default()
+                        .bg(theme.bg())
+                        .fg(Color::Green)
+                        .add_modifier(Modifier::BOLD),
+        ),
     ])
 }
