@@ -198,5 +198,19 @@ fn help_view<'a>(theme: &Theme, path: PathBuf) -> Paragraph<'a>{
                         .fg(Color::Green)
                         .add_modifier(Modifier::BOLD),
         ),
-    ])
+        Span::styled(
+                 "to select a time",
+                 Style::default().bg(theme.bg()).fg(Color::DarkGray),
+        ),
+    ]);
+    Paragraph::new(vec![help, file_path])
+               .style(Style::default().bg(theme.bg()).fg(theme.fg()))
+               .block(
+                    Block::default()
+                           .borders(Borders::TOP)
+                           .style(Style::default().bg(theme.bg()).fg(theme.fg())),
+        )
+        .alignment(Alignment::Left)
 }
+
+fn remaining_time_view<'a>(typing:: &Typing, theme: &Theme) -> Paragraph<'a>{}
