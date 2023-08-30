@@ -213,4 +213,57 @@ fn help_view<'a>(theme: &Theme, path: PathBuf) -> Paragraph<'a>{
         .alignment(Alignment::Left)
 }
 
-fn remaining_time_view<'a>(typing:: &Typing, theme: &Theme) -> Paragraph<'a>{}
+fn remaining_time_view<'a>(typing:: &Typing, theme: &Theme) -> Paragraph<'a>{
+    let time = Spans::from(Span::styled(
+            typing.get_remaining_time().to_string(),
+            Style::default()
+                    .bg(theme.bg())
+                    .fg(Color::Green)
+                    .add_modifier(Modifier::BOLD),
+    ));
+    Paragraph::new(vec![time])
+            .style(Style::default().bg(theme.bg()).fg(theme.fg()))
+            .alignment(Alignment::Left)
+}
+
+fn result_view<'a>(typing: &Typing, borders: Borders, theme: &Theme) -> Paragraph<'a>{
+    let result = Spans::from(vec![
+		Span::styled(
+			"wpm: ",
+			Style::default().bg(Theme::bg(&theme)).fg(Color::DarkGray),
+		),
+		Span::styled(
+			typing.wpm().to_string(),
+			Style::default().bg(Theme::bg(&theme)).fg(Color::Yellow),
+		),
+		Span::styled(
+			" acc: ",
+			Style::default().bg(Theme::bg(&theme)).fg(Color::DarkGray),
+		),
+		Span::styled(
+			typing.acc().to_string() + "%",
+			Style::default().bg(Theme::bg(&theme)).fg(Color::Gray),
+		),
+		Span::styled(
+			" key: ",
+			Style::default().bg(Theme::bg(&theme)).fg(Color::DarkGray),
+		),
+		Span::styled(
+			(typing.typed() + typing.typo()).to_string(),
+			Style::default().bg(Theme::bg(&theme)).fg(Color::Gray),
+		),
+		Span::styled("/", Style::default().bg(Theme::bg(&theme)).fg(Color::Gray)),
+		Span::styled(
+			(typing.typo()).to_string(),
+			Style::default().bg(Theme::bg(&theme)).fg(Color::Red),
+		),
+	]);
+	Paragraph::new(vec![result])
+		.style(Style::default().bg(Theme::bg(&theme)).fg(Theme::fg(&theme)))
+		.block(
+			Block::default()
+				.borders(border)
+				.style(Style::default().bg(Theme::bg(&theme)).fg(Theme::fg(&theme))),
+		)
+		.alignment(Alignment::Left)
+}
