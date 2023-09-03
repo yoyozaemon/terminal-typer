@@ -267,3 +267,116 @@ fn result_view<'a>(typing: &Typing, borders: Borders, theme: &Theme) -> Paragrap
 		)
 		.alignment(Alignment::Left)
 }
+
+fn time_view<'a>(app: &App, theme: &Theme) -> Paragraph<'a> {
+	let times: Vec<Span> = app
+		.selectable_time()
+		.iter()
+		.map(|t| {
+			Span::styled(
+				format!("{} ", t.as_secs().to_string()),
+				if app.time == *t {
+					Style::default()
+						.bg(theme.bg())
+						.fg(Color::Yellow)
+						.add_modifier(Modifier::BOLD)
+				} else {
+					Style::default().bg(theme.bg()).fg(Color::DarkGray)
+				},
+			)
+		})
+		.collect();
+	let result = Spans::from(times);
+	Paragraph::new(vec![result])
+		.alignment(Alignment::Left)
+		.block(Block::default().style(Style::default().bg(theme.bg()).fg(theme.fg())))
+}
+
+fn lines<'a>(
+	lines: Vec<Line>,
+	current_line_index: usize,
+	is_typing_error: bool,
+	theme: &Theme,
+) -> Paragraph<'a> {
+	let text: Vec<Spans<'a>> = lines
+		.iter()
+		.map(|l| line(l.clone(), current_line_index, is_typing_error, theme))
+		.collect();
+	Paragraph::new(text)
+		.style(Style::default().bg(theme.fg()).fg(theme.bg()))
+		.block(Block::default().style(Style::default().bg(theme.bg()).fg(theme.fg())))
+		.alignment(Alignment::Left)
+}
+
+fn line<'a>(
+	line: Line,
+	current_line_index: usize,
+	is_typing_error: bool,
+	theme: &Theme,
+) -> Spans<'a> {
+	if line.line_no() - 1 == current_line_index {
+		let entered = Span::styled(
+			line.entered_text().unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(Color::Green),
+		);
+		let current = if is_typing_error {
+			Span::styled(
+				line.current_text()
+					.map(String::from)
+					.unwrap_or("".to_owned()),
+				Style::default()
+					.bg(Color::Red)
+					.fg(Color::White)
+					.add_modifier(Modifier::SLOW_BLINK),
+			)
+		} else {
+			Span::styled(
+				line.current_text()
+					.map(String::from)
+					.unwrap_or("".to_owned()),
+				Style::default()
+					.bg(Color::Green)
+					.fg(Color::White)
+					.add_modifier(Modifier::BOLD)
+					.add_modifier(Modifier::SLOW_BLINK),
+			)
+		};
+		let rest = Span::styled(
+			line.rest_text().unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(theme.fg()),
+		);
+		Spans::from(vec![entered, current, rest])
+	} else if line.line_no() - 1 > current_line_index {
+		let entered = Span::styled(
+			line.entered_text().unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(Color::Green),
+		);
+		let current = Span::styled(
+			line.current_text()
+				.map(String::from)
+				.unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(Color::DarkGray),
+		);
+		let rest = Span::styled(
+			line.rest_text().unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(Color::DarkGray),
+		);
+		Spans::from(vec![entered, current, rest])
+	} else {
+		let entered = Span::styled(
+			line.entered_text().unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(Color::Green),
+		);
+		let current = Span::styled(
+			line.current_text()
+				.map(String::from)
+				.unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(Color::Green),
+		);
+		let rest = Span::styled(
+			line.rest_text().unwrap_or("".to_owned()),
+			Style::default().bg(theme.bg()).fg(Color::DarkGray),
+		);
+		Spans::from(vec![entered, current, rest])
+	}
+}
