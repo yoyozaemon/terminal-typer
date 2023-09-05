@@ -127,4 +127,20 @@ fn run_app(mut app: App, text: &str, theme: Theme, file: PathBuf) ->io::Result<(
     }
 }
 
-fn start_typing(file: PathBuf, time: Duration, display_line: usize, theme: Theme) -> Result<()>{}
+fn start_typing(file: PathBuf, time: Duration, display_line: usize, theme: Theme) -> Result<()>{
+    let reader = FileReader::new(file.clone());
+    match reader.load(){
+        Ok(text) => {
+            let app = App::new(&text, time, display_line)?;
+            let res = run_app(app, &text, theme, file);
+
+            if let Err(err) = res {
+                return Err(anyhow!(format!("{:?}",err)));
+            }
+
+            close_app()?;
+            Ok(());
+        }
+        Err(_) => Err(anyhow!(format!("Failed to load file."))),
+    }
+}
