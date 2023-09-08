@@ -1,5 +1,5 @@
 use anyhow::Result;
 
 pub trait Reader {
-    fn load(&self)->Result<String>;
+	fn load(&self) -> Result<String>;
 }
